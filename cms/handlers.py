@@ -44,3 +44,7 @@ error_log= configure_logging('error', ERROR)
 def handle_exception(e):
     tb= format_exc()
     error_log.error('%s - - %s "%s %s %s" 500 -\n%s', request.remote_addr, timestamp, request.method, request.path, request.scheme.upper(), tb)
+    original= getattr(e, 'original_exception', None)
+    if original is None:
+        return render_template('error.html'), 500
+    return render_template('error.html', error=original), 500
