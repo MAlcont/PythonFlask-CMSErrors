@@ -7,6 +7,7 @@ from traceback import format_exc
 
 from cms import app
 from cms.admin.models import Content, Type
+from auth.py import unauthorized
 #!
 request_log= getLogger('werkzeug')
 request_log.disabled = True
@@ -48,3 +49,5 @@ def handle_exception(e):
     if original is None:
         return render_template('error.html'), 500
     return render_template('error.html', error=original), 500
+
+unauthorized_log= configure_logging('unauthorized', WARN)
