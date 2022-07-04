@@ -3,7 +3,7 @@ from flask import request, render_template
 from logging import getLogger, INFO, WARN, ERROR
 from logging.handlers import RotatingFileHandler
 from time import strftime
-from traceback import format_exec
+from traceback import format_exc
 
 from cms import app
 from cms.admin.models import Content, Type
@@ -11,6 +11,8 @@ from cms.admin.models import Content, Type
 request_log= getLogger('werkzeug')
 request_log.disabled = True
 
+
+@app.context_processor
 def inject_titles():
     titles= Content.query.with_entities(Content.slug, Content.title).join(Type).filter(Type.name=='page')
     return dict(titles=titles)
