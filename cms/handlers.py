@@ -1,6 +1,6 @@
 ## Imports
 from flask import request, render_template
-from logging import getLogger
+from logging import getLogger, INFO, WARN, ERROR
 from logging.handlers import RotatingFileHandler
 from time import strftime
 
@@ -18,3 +18,10 @@ def configure_logging(name, level):
     return log
 
 timestamp= strftime('[%d/%b/%Y %H:%M:%S]')
+
+access_log= configure_logging('access', INFO)
+
+@app.after_request
+def after_request(response):
+    access_log.info('%s - - %s "%s %s %s" %s -', request.remote_addr, timestamp, request.method, request.path, request.scheme.upper(), response.status_code)
+    return response
