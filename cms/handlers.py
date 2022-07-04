@@ -3,12 +3,17 @@ from flask import request, render_template
 from logging import getLogger, INFO, WARN, ERROR
 from logging.handlers import RotatingFileHandler
 from time import strftime
+from traceback import format_exec
 
 from cms import app
 from cms.admin.models import Content, Type
 #!
 request_log= getLogger('werkzeug')
 request_log.disabled = True
+
+def inject_titles():
+    titles= Content.query.with_entities(Content.slug, Content.title).join(Type).filter(Type.name=='page')
+    return dict(titles=titles)
 
 def configure_logging(name, level):
     log= getLogger(name)
@@ -27,3 +32,12 @@ def after_request(response):
         access_log.info('%s - - %s "%s %s %s" %s -', request.remote_addr, timestamp, request.method, request.path, request.scheme.upper(), response.status_code)
 
     return response
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('not_found.html'), 404
+
+error_log= configure_logging('error', ERROR)
+@app.errorhandler(Exception)
+def handle_exception(e):
+    tb= format_exc()
