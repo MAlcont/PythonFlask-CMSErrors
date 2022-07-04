@@ -51,6 +51,6 @@ def handle_exception(e):
     return render_template('error.html', error=original), 500
 
 unauthorized_log= configure_logging('unauthorized', WARN)
-@anauthorized.connect
+@unauthorized.connect
 def log_unauthorized(app, user_id, username, **kwargs):
     unauthorized_log.warning('Unauthorized: %s %s %s', timestamp, user_id, username)
