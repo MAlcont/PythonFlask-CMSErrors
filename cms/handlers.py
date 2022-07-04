@@ -43,3 +43,4 @@ error_log= configure_logging('error', ERROR)
 @app.errorhandler(Exception)
 def handle_exception(e):
     tb= format_exc()
+    error_log.error('%s - - %s "%s %s %s" 500 -\n%s', request.remote_addr, timestamp, request.method, request.path, request.scheme.upper(), tb)
